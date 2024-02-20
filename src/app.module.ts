@@ -9,9 +9,24 @@ import { StoresModule } from './stores/stores.module';
 import { VendorsModule } from './vendors/vendors.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UserModule, OrdersModule, ItemsModule, TimeslotsModule, StoresModule, VendorsModule, PaymentsModule, AuthModule],
+  imports: [
+    UserModule,
+    OrdersModule,
+    ItemsModule,
+    TimeslotsModule,
+    StoresModule,
+    VendorsModule,
+    PaymentsModule,
+    AuthModule,
+    PrismaModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
