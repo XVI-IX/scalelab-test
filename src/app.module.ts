@@ -11,6 +11,8 @@ import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -23,9 +25,11 @@ import { ConfigModule } from '@nestjs/config';
     PaymentsModule,
     AuthModule,
     PrismaModule,
+    JwtModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

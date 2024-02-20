@@ -16,5 +16,9 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  google_id?: string;
 }
