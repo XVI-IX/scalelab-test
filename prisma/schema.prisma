@@ -63,8 +63,8 @@ model vendors {
   business_address  String
   verificationToken String?  @unique
   verified          Boolean  @default(false)
-  resetToken        String?
   status            status   @default(pending)
+  resetToken        String?
   role              String   @default("vendor")
   stores            stores[]
   orders            orders[]
@@ -81,6 +81,7 @@ model stores {
   description String
   image_url   String
   active      Boolean? @default(false)
+  status            status   @default(pending)
   items       items[]
   orders      orders[]
   created_at  DateTime @default(now()) @db.Timestamp(6)
@@ -95,7 +96,7 @@ model items {
   description String
   price       Float
   image_url   String
-  available   Boolean
+  available   Boolean       @default(true)
   order_items order_items[]
   created_at  DateTime      @default(now()) @db.Timestamp(6)
   updated_at  DateTime      @updatedAt

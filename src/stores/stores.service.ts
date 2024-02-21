@@ -5,20 +5,20 @@ import {
 } from '@nestjs/common';
 import { CreateStoreDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { vendor } from 'src/vendors/vendor.entity';
 import { updateStoreDto } from './dto/updateStore.dto';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 @Injectable()
 export class StoresService {
   constructor(private prisma: PrismaService) {}
 
-  async createStore(vendorData: vendor, dto: CreateStoreDto) {
+  async createStore(user: UserEntity, dto: CreateStoreDto) {
     try {
       const store = await this.prisma.stores.create({
         data: {
           vendor: {
             connect: {
-              vendor_id: vendorData.vendor_id,
+              vendor_id: user.sub,
             },
           },
           name: dto.name,
@@ -44,11 +44,11 @@ export class StoresService {
     }
   }
 
-  async getStores(vendorData: vendor) {
+  async getStores(user: UserEntity) {
     try {
       const stores = await this.prisma.stores.findMany({
         where: {
-          vendor_id: vendorData.vendor_id,
+          vendor_id: user.sub,
         },
         select: {
           store_id: true,
@@ -82,12 +82,11 @@ export class StoresService {
     }
   }
 
-  async getStoreById(vendorData: vendor, store_id: number) {
+  async getStoreById(store_id: number) {
     try {
       const store = await this.prisma.stores.findFirst({
         where: {
           store_id: store_id,
-          vendor_id: vendorData.vendor_id,
         },
       });
 
@@ -107,15 +106,10 @@ export class StoresService {
     }
   }
 
-  async updateStoreById(
-    vendorData: vendor,
-    store_id: number,
-    dto: updateStoreDto,
-  ) {
+  async updateStoreById(store_id: number, dto: updateStoreDto) {
     try {
       const store = await this.prisma.stores.update({
         where: {
-          vendor_id: vendorData.vendor_id,
           store_id: store_id,
         },
         data: dto,
@@ -137,11 +131,11 @@ export class StoresService {
     }
   }
 
-  async changeStoreStatus(vendorData: vendor, store_id: number) {
+  async changeStoreStatus(user: UserEntity, store_id: number) {
     try {
       const store = await this.prisma.stores.findUnique({
         where: {
-          vendor_id: vendorData.vendor_id,
+          vendor_id: user.sub,
           store_id: store_id,
         },
       });
@@ -164,6 +158,33 @@ export class StoresService {
       }
 
       throw new NotFoundException('Store not found');
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getStoreItems(store_id: number) {
+    try {
+      const items = await this.prisma.stores.findUnique({
+        where: {
+          store_id: store_id,
+        },
+        select: {
+          items: true,
+        },
+      });
+
+      if (!items) {
+        throw new NotFoundException('Items not found');
+      }
+
+      return {
+        message: 'Items retrieved',
+        status: 'success',
+        statusCode: 200,
+        data: items.items,
+      };
     } catch (error) {
       console.error(error);
       throw error;

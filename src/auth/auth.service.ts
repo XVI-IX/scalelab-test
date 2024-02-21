@@ -20,6 +20,7 @@ import config from '../config/environment/env.config';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EmailData } from 'src/email/email.entity';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -49,10 +50,11 @@ export class AuthService {
         }
       }
 
-      const payload = {
+      const payload: UserEntity = {
         sub: newUser.user_id,
         username: newUser.user_name,
         email: newUser.email,
+        role: [newUser.role.toLowerCase()],
       };
 
       const token = await this.jwt.signAsync(payload, {
@@ -216,7 +218,7 @@ export class AuthService {
 
       if (
         !config.adminMail.includes(user.email) &&
-        user.role !== 'superadmin'
+        user.role.toLowerCase() !== 'superadmin'
       ) {
         throw new ForbiddenException(
           'User with email does not have privileges to use this route.',
@@ -250,11 +252,11 @@ export class AuthService {
         throw new ForbiddenException('Invalid password');
       }
 
-      const payload = {
+      const payload: UserEntity = {
         sub: user.user_id,
         username: user.user_name,
         email: user.email,
-        role: user.role,
+        role: [user.role.toLowerCase()],
       };
 
       const token = await this.jwt.signAsync(payload, {
@@ -309,11 +311,11 @@ export class AuthService {
         };
       }
 
-      const payload = {
+      const payload: UserEntity = {
         sub: vendor.vendor_id,
         email: vendor.email,
-        name: vendor.name,
-        role: 'vendor',
+        username: vendor.name,
+        role: ['vendor'],
       };
 
       const token = await this.jwt.signAsync(payload, {
