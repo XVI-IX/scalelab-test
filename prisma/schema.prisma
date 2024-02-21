@@ -32,6 +32,12 @@ enum payment_status {
   successful
 }
 
+enum status {
+  pending
+  approved
+  rejected
+}
+
 model users {
   user_id           Int       @id @default(autoincrement())
   user_name         String
@@ -41,7 +47,8 @@ model users {
   google_id         String?   @unique
   role              user_role @default(customer)
   verified          Boolean   @default(false)
-  verificationToken String?
+  verificationToken String?   @unique
+  resetToken        String?
   created_at        DateTime  @default(now()) @db.Timestamp(6)
   updated_at        DateTime  @updatedAt
   orders            orders[]
@@ -56,6 +63,8 @@ model vendors {
   business_address  String
   verificationToken String?  @unique
   verified          Boolean  @default(false)
+  resetToken        String?
+  status            status   @default(pending)
   stores            stores[]
   orders            orders[]
 }
