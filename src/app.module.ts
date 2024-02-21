@@ -17,6 +17,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/role.guard';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RolesGuard } from './common/guards/role.guard';
     }),
     EmailModule,
     EventEmitterModule.forRoot(),
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

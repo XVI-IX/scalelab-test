@@ -81,7 +81,8 @@ model stores {
   description String
   image_url   String
   active      Boolean? @default(false)
-  status            status   @default(pending)
+  status      status   @default(pending)
+  admin_open  Boolean  @default(true)
   items       items[]
   orders      orders[]
   created_at  DateTime @default(now()) @db.Timestamp(6)
@@ -111,12 +112,13 @@ model orders {
   timeslot         timeslots      @relation(fields: [timeslot_id], references: [timeslot_id])
   timeslot_id      Int
   placed_at        DateTime       @default(now())
+  delivery_location String
   status           order_status   @default(pending)
   total_price      Float
   payment_status   payment_status @default(pending)
   order_items      order_items[]
-  vendors          vendors?       @relation(fields: [vendorsVendor_id], references: [vendor_id])
-  vendorsVendor_id Int?
+  vendors          vendors?       @relation(fields: [vendor_id], references: [vendor_id])
+  vendor_id Int?
 }
 
 model order_items {
