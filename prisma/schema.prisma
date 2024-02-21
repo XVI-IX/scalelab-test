@@ -65,8 +65,11 @@ model vendors {
   verified          Boolean  @default(false)
   resetToken        String?
   status            status   @default(pending)
+  role              String   @default("vendor")
   stores            stores[]
   orders            orders[]
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+  updated_at        DateTime @updatedAt
 }
 
 model stores {
@@ -77,8 +80,11 @@ model stores {
   address     String
   description String
   image_url   String
+  active      Boolean? @default(false)
   items       items[]
   orders      orders[]
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @updatedAt
 }
 
 model items {
@@ -91,6 +97,8 @@ model items {
   image_url   String
   available   Boolean
   order_items order_items[]
+  created_at  DateTime      @default(now()) @db.Timestamp(6)
+  updated_at  DateTime      @updatedAt
 }
 
 model orders {

@@ -16,8 +16,8 @@ export class EmailService {
       subject: `Admin account created`,
       template: './welcome',
       context: {
-        username,
-        url,
+        username: username,
+        url: url,
       },
     });
   }

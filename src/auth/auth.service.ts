@@ -115,6 +115,14 @@ export class AuthService {
       };
     } catch (error) {
       console.error(error);
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new BadRequestException(
+            `Unique constraint violation. Ensure ${error.meta.target[0]} is unique`,
+          );
+        }
+      }
       throw error;
     }
   }
