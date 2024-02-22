@@ -1,8 +1,17 @@
-import { Controller, Get, HttpCode, ParseIntPipe, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  ParseIntPipe,
+  Param,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { Public } from 'src/common/decorators';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('customers')
+@UseInterceptors(CacheInterceptor)
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 

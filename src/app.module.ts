@@ -19,9 +19,13 @@ import { RolesGuard } from './common/guards/role.guard';
 import { AdminModule } from './admin/admin.module';
 import { CustomersModule } from './customers/customers.module';
 import { BullModule } from '@nestjs/bull';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     BullModule.forRoot({
       redis: {
         host: 'https://redis-13356.c253.us-central1-1.gce.cloud.redislabs.com',

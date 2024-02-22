@@ -1,10 +1,18 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UseInterceptors,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
   constructor(private prisma: PrismaService) {}
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('admin.getVendors')
+  @CacheTTL(30)
   async getVendors() {
     try {
       const vendors = await this.prisma.vendors.findMany();
@@ -132,6 +140,9 @@ export class AdminService {
     }
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('admin.getOrders')
+  @CacheTTL(30)
   async getOrders() {
     try {
       const orders = await this.prisma.orders.findMany();
@@ -152,6 +163,9 @@ export class AdminService {
     }
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('admin.getCustomers')
+  @CacheTTL(30)
   async getCustomers() {
     try {
       const customers = await this.prisma.users.findMany({
