@@ -1,13 +1,13 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export interface order_items {
-  itemId: number;
-  quantity: number;
-  price: number;
-}
+// export interface order_items {
+//   itemId: number;
+//   quantity: number;
+//   price: number;
+// }
 
 export class OrderDto {
-  order_items: order_items[];
+  order_items: any;
 
   @IsNumber()
   @IsNotEmpty()
@@ -16,4 +16,6 @@ export class OrderDto {
   @IsString()
   @IsNotEmpty()
   delivery_location: string;
+
+  timeslotId?: number;
 }

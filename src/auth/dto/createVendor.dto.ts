@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
+import { TransferRecipient } from 'src/payments/recipient.entity';
 
 export class CreateVendorDto {
   @IsString()
@@ -21,4 +22,6 @@ export class CreateVendorDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  bank_details?: TransferRecipient;
 }

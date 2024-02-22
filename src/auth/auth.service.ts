@@ -21,6 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EmailData } from 'src/email/email.entity';
 import { UserEntity } from 'src/common/entities/user.entity';
+import { PaymentsService } from 'src/payments/payments.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private readonly eventEmitter: EventEmitter2,
+    private payment: PaymentsService,
   ) {}
 
   async user(dto: CreateUserDto) {
@@ -163,18 +165,44 @@ export class AuthService {
 
   async registerVendor(dto: CreateVendorDto) {
     try {
+      let vendor;
       const verificationToken = randomBytes(12).toString('hex');
       const password = await argon.hash(dto.password);
-      const vendor = await this.prisma.vendors.create({
-        data: {
-          name: dto.name,
-          email: dto.email,
-          password: password,
-          phone_number: dto.phone_number,
-          business_address: dto.business_address,
-          verificationToken,
-        },
-      });
+
+      if (dto.bank_details) {
+        const response = await this.payment.createTransferRecipient(
+          dto.bank_details,
+        );
+
+        if (!response) {
+          throw new InternalServerErrorException(
+            'Bank details could not be processed',
+          );
+        }
+
+        vendor = await this.prisma.vendors.create({
+          data: {
+            name: dto.name,
+            email: dto.email,
+            password: password,
+            phone_number: dto.phone_number,
+            business_address: dto.business_address,
+            recipient_code: response.recipient_code,
+            verificationToken,
+          },
+        });
+      } else {
+        vendor = await this.prisma.vendors.create({
+          data: {
+            name: dto.name,
+            email: dto.email,
+            password: password,
+            phone_number: dto.phone_number,
+            business_address: dto.business_address,
+            verificationToken,
+          },
+        });
+      }
 
       const data: EmailData = {
         to: vendor.email,

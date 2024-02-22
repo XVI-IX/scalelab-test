@@ -4,10 +4,11 @@ import { AuthController } from './auth.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService],
-  imports: [PrismaModule, JwtModule, EventEmitterModule],
+  imports: [PrismaModule, JwtModule, EventEmitterModule, PaymentsModule],
 })
 export class AuthModule {}
