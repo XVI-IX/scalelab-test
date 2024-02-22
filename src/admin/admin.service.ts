@@ -52,6 +52,32 @@ export class AdminService {
     }
   }
 
+  async pendVendor(vendorId: number) {
+    try {
+      const vendor = await this.prisma.vendors.update({
+        where: {
+          vendor_id: vendorId,
+        },
+        data: {
+          status: 'pending',
+        },
+      });
+
+      if (!vendor) {
+        throw new InternalServerErrorException('Vendor could not be pended');
+      }
+
+      return {
+        message: `Vendor - ${vendor.name} pended`,
+        status: 'success',
+        statusCode: 200,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async restrictStore(vendorId: number, storeId: number) {
     try {
       const store = await this.prisma.stores.update({

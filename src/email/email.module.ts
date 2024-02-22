@@ -5,6 +5,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import config from 'src/config/environment/env.config';
 import { join } from 'path';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   controllers: [EmailController],
@@ -30,6 +31,9 @@ import { join } from 'path';
           strict: false,
         },
       },
+    }),
+    BullModule.registerQueue({
+      name: 'mailing',
     }),
   ],
 })
