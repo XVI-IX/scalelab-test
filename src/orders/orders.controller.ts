@@ -52,7 +52,6 @@ export class OrdersController {
     @Body() dto: OrderDto,
     @Param('storeId', ParseIntPipe) storeId: number,
   ) {
-    this.eventEmitter.emit('new.order', { data: 'payload' });
     return this.ordersService.order(user.sub, dto, storeId);
   }
 

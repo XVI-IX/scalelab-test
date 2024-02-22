@@ -7,10 +7,14 @@ import { CreateStoreDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { updateStoreDto } from './dto/updateStore.dto';
 import { UserEntity } from 'src/common/entities/user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class StoresService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async createStore(user: UserEntity, dto: CreateStoreDto) {
     try {
@@ -106,7 +110,11 @@ export class StoresService {
     }
   }
 
-  async updateStoreById(store_id: number, dto: updateStoreDto) {
+  async updateStoreById(
+    user: UserEntity,
+    store_id: number,
+    dto: updateStoreDto,
+  ) {
     try {
       const store = await this.prisma.stores.update({
         where: {
@@ -118,6 +126,14 @@ export class StoresService {
       if (!store) {
         throw new InternalServerErrorException('Store could not be updated');
       }
+
+      const sseData = {
+        action: 'Vendor updating store',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
 
       return {
         message: 'Store updated',
@@ -149,6 +165,14 @@ export class StoresService {
             active: !store.active,
           },
         });
+
+        const sseData = {
+          action: "Vendor changing store's status",
+          vendor_id: user.sub,
+          vendor_username: user.username,
+        };
+
+        this.eventEmitter.emit('vendor.action', { data: sseData });
 
         return {
           message: 'Store visiblilty updated',

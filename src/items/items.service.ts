@@ -5,12 +5,17 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateItemDto, UpdateItemDto } from './dto';
+import { UserEntity } from 'src/common/entities/user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ItemsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
-  async addItemToStore(store_id: number, dto: CreateItemDto) {
+  async addItemToStore(user: UserEntity, store_id: number, dto: CreateItemDto) {
     try {
       const item = await this.prisma.items.create({
         data: {
@@ -32,6 +37,14 @@ export class ItemsService {
         );
       }
 
+      const sseData = {
+        action: 'Vendor adding items',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
+
       return {
         message: 'Item added to store successfully',
         status: 'success',
@@ -44,7 +57,12 @@ export class ItemsService {
     }
   }
 
-  async updateItem(store_id: number, item_id: number, dto: UpdateItemDto) {
+  async updateItem(
+    user: UserEntity,
+    store_id: number,
+    item_id: number,
+    dto: UpdateItemDto,
+  ) {
     try {
       const item = await this.prisma.items.update({
         where: {
@@ -57,6 +75,16 @@ export class ItemsService {
       if (!item) {
         throw new InternalServerErrorException('Item could not be updated');
       }
+
+      const sseData = {
+        action: 'Vendor updating store item',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+        store_id: store_id,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
+
       return {
         message: 'Item updated successfully.',
         status: 'success',
@@ -69,7 +97,11 @@ export class ItemsService {
     }
   }
 
-  async changeAvailability(store_id: number, item_id: number) {
+  async changeAvailability(
+    user: UserEntity,
+    store_id: number,
+    item_id: number,
+  ) {
     try {
       const item = await this.prisma.items.findUnique({
         where: {
@@ -91,6 +123,15 @@ export class ItemsService {
         },
       });
 
+      const sseData = {
+        action: 'Vendor changed item availability',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+        item_id: item_id,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
+
       return {
         message: 'Item availability updated',
         status: 'success',
@@ -102,7 +143,7 @@ export class ItemsService {
     }
   }
 
-  async deleteItem(store_id: number, item_id: number) {
+  async deleteItem(user: UserEntity, store_id: number, item_id: number) {
     try {
       const item = await this.prisma.items.delete({
         where: {
@@ -114,6 +155,15 @@ export class ItemsService {
       if (!item) {
         throw new InternalServerErrorException('Item could not be deleted');
       }
+
+      const sseData = {
+        action: 'Vendor deleted items',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+        store_id,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
 
       return {
         message: 'Item deleted successfully',

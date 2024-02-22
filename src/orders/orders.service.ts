@@ -16,7 +16,6 @@ export class OrdersService {
 
   async order(customerId: number, dto: OrderDto, storeId: number) {
     try {
-      console.log(dto.timeslotId);
       const order = await this.prisma.orders.create({
         data: {
           customer: { connect: { user_id: customerId } },
@@ -54,6 +53,8 @@ export class OrdersService {
           order_id: order.order_id,
         },
       });
+
+      this.eventEmitter.emit('new.order', { data: JSON.stringify(order) });
 
       return response;
     } catch (error) {
