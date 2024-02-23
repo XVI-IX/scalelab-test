@@ -7,7 +7,7 @@
 ## Overview
 
 This submission is a technical test for the role of an entry-level software engineer.
-The [postman](https://documenter.getpostman.com/view/33161533/2sA2rCT1qs) documentation provides a comprehensive view into the endpoints. If in anycas the documentation is not accessible, please find the exported collection with the name `Food Ordering Service.postman_collection.json`
+The [postman](https://documenter.getpostman.com/view/21588593/2sA2rCT1ci) documentation provides a comprehensive view into the endpoints. If in anycas the documentation is not accessible, please find the exported collection with the name `Food Ordering Service.postman_collection.json`
 
 The system flow documents can also be accessed [here](https://drive.google.com/file/d/16au3sx6BHTw3u07JQrBSRjmADeVENjmq/view?usp=sharing)
 
