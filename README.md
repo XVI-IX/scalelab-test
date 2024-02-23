@@ -6,7 +6,10 @@
 
 ## Overview
 
-This submission is a technical test for the role of an entry-level software engineer
+This submission is a technical test for the role of an entry-level software engineer.
+The [postman](https://documenter.getpostman.com/view/21588593/2sA2rCT1ci) documentation provides a comprehensive view into the endpoints.
+
+The system flow documents can also be accessed [here](https://drive.google.com/file/d/16au3sx6BHTw3u07JQrBSRjmADeVENjmq/view?usp=sharing)
 
 ## Introduction
 
