@@ -101,9 +101,12 @@ export class EmailProcessor {
         this.mailerService.sendMail({
           to: email,
           subject: subject,
-          template: content || './admin-message',
+          // template: content || './admin-message',
+          html: content,
         });
       });
+
+      // console.log(mailerPromises);
       const responses = await Promise.all(mailerPromises);
 
       this.eventEmitter.emit('admin.allMessagesSent');

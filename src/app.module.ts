@@ -28,8 +28,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     BullModule.forRoot({
       redis: {
-        host: 'https://redis-13356.c253.us-central1-1.gce.cloud.redislabs.com',
-        port: 13356,
+        host: 'localhost',
+        port: 6379,
       },
     }),
     OrdersModule,

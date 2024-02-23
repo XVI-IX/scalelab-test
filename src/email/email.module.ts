@@ -6,10 +6,11 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import config from 'src/config/environment/env.config';
 import { join } from 'path';
 import { BullModule } from '@nestjs/bull';
+import { EmailProcessor } from './email.processor';
 
 @Module({
   controllers: [EmailController],
-  providers: [EmailService],
+  providers: [EmailService, EmailProcessor],
   imports: [
     MailerModule.forRoot({
       transport: {

@@ -36,7 +36,7 @@ export class OrdersController {
     );
   }
 
-  @Sse('/sse')
+  @Sse('/sse-valid')
   SseValidOrder(): Observable<MessageEvent> {
     return fromEvent(this.eventEmitter, 'valid.order').pipe(
       map((payload) => {

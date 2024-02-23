@@ -10,14 +10,14 @@ export class EmailService {
 
   @OnEvent('admin.register')
   async welcomeAdminEmail(data: EmailData) {
-    const job = await this.mailingQueue.add('admin.register', { data });
+    const job = await this.mailingQueue.add('admin.register', data );
 
     return { jobId: job.id };
   }
 
   @OnEvent('admin.verify')
   async verifyAdminEmail(data: EmailData) {
-    const job = await this.mailingQueue.add('admin.verify', { data });
+    const job = await this.mailingQueue.add('admin.verify', data );
     return { jobId: job.id };
   }
 
@@ -31,19 +31,19 @@ export class EmailService {
 
   @OnEvent('order.confirmed')
   async orderConfirmEmail(data: EmailData) {
-    const job = await this.mailingQueue.add('order.confirmed', { data });
+    const job = await this.mailingQueue.add('order.confirmed', data );
     return { jobId: job.id };
   }
 
   @OnEvent('order.delivered')
   async orderDelivered(data: EmailData) {
-    const job = await this.mailingQueue.add('order.delivered', { data });
+    const job = await this.mailingQueue.add('order.delivered', data );
     return { jobId: job.id };
   }
 
   @OnEvent('admin.sendAllMessage')
   async sendAdminMailAll(data: EmailData) {
-    const job = await this.mailingQueue.add('admin.messageAll', { data });
+    const job = await this.mailingQueue.add('admin.messageAll', data );
     return { jobId: job.id };
   }
 }
