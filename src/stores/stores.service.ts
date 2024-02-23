@@ -193,6 +193,7 @@ export class StoresService {
           vendor_id: user.sub,
           id: store_id,
           status: 'approved',
+          admin_open: true,
         },
       });
 
@@ -272,6 +273,7 @@ export class StoresService {
       const store = await this.prisma.stores.delete({
         where: {
           id: store_id,
+          admin_open: true,
         },
       });
 
