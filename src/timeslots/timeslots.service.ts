@@ -3,16 +3,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TimeslotsService {
-
-  constructor(
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   generateTimeSlot() {
     try {
-      
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 }

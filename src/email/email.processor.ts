@@ -44,6 +44,39 @@ export class EmailProcessor {
     });
   }
 
+  @Process('vendor.register')
+  async sendWelcomeEmailVendor(job: Job<EmailData>) {
+    const { data } = job;
+
+    const { username, url } = data.data;
+
+    await this.mailerService.sendMail({
+      to: data.to,
+      subject: `Vendor account created`,
+      template: './welcome-vendor',
+      context: {
+        username,
+        url,
+      },
+    });
+  }
+
+  @Process('vendor.verify')
+  async sendVerifyEmailVendor(job: Job<EmailData>) {
+    const { data } = job;
+
+    const { username } = data.data;
+
+    await this.mailerService.sendMail({
+      to: data.to,
+      subject: 'Vendor account verified',
+      template: './verify-vendor',
+      context: {
+        username,
+      },
+    });
+  }
+
   @Process('vendors.forgot-password')
   async sendVendorFGEmail(job: Job<EmailData>) {
     const { data } = job;

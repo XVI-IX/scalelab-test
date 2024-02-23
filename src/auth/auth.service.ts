@@ -376,6 +376,16 @@ export class AuthService {
         throw new InternalServerErrorException('Vendor could not be updated');
       }
 
+      const data: EmailData = {
+        to: vendor.email,
+        data: {
+          username: vendor.name,
+        },
+      };
+
+      // TODO: Send verification email
+      this.eventEmitter.emit('vendor.verify', data);
+
       return {
         message: 'Account verified successfully',
         status: 'success',

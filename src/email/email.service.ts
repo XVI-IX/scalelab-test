@@ -46,4 +46,16 @@ export class EmailService {
     const job = await this.mailingQueue.add('admin.messageAll', data);
     return { jobId: job.id };
   }
+
+  @OnEvent('register.vendor')
+  async sendVendorRegisterMail(data: EmailData) {
+    const job = await this.mailingQueue.add('vendor.register', data);
+    return { jobId: job.id };
+  }
+
+  @OnEvent('vendor.verify')
+  async sendVendorVerifiedMail(data: EmailData) {
+    const job = await this.mailingQueue.add('vendor.verify', data);
+    return { jobId: job.id };
+  }
 }
