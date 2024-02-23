@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateStoreDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -18,6 +19,18 @@ export class StoresService {
 
   async createStore(user: UserEntity, dto: CreateStoreDto) {
     try {
+      const vendor = await this.prisma.vendors.findUnique({
+        where: {
+          id: user.sub,
+        },
+      });
+
+      if (vendor.status !== 'approved') {
+        throw new UnauthorizedException(
+          'Your vendor account must be approved to create a store',
+        );
+      }
+
       const store = await this.prisma.stores.create({
         data: {
           vendor: {
@@ -116,9 +129,23 @@ export class StoresService {
     dto: updateStoreDto,
   ) {
     try {
+      const vendor = await this.prisma.vendors.findUnique({
+        where: {
+          id: user.sub,
+        },
+      });
+
+      if (vendor.status !== 'approved') {
+        throw new UnauthorizedException(
+          'Your vendor account must be approved to update a store',
+        );
+      }
+
       const store = await this.prisma.stores.update({
         where: {
           id: store_id,
+          status: 'approved',
+          admin_open: true,
         },
         data: dto,
       });
@@ -149,10 +176,23 @@ export class StoresService {
 
   async changeStoreStatus(user: UserEntity, store_id: number) {
     try {
+      const vendor = await this.prisma.vendors.findUnique({
+        where: {
+          id: user.sub,
+        },
+      });
+
+      if (vendor.status !== 'approved') {
+        throw new UnauthorizedException(
+          'Your vendor account must be approved to change your store visibility',
+        );
+      }
+
       const store = await this.prisma.stores.findUnique({
         where: {
           vendor_id: user.sub,
           id: store_id,
+          status: 'approved',
         },
       });
 
@@ -215,8 +255,20 @@ export class StoresService {
     }
   }
 
-  async deleteStore(store_id: number) {
+  async deleteStore(user: UserEntity, store_id: number) {
     try {
+      const vendor = await this.prisma.vendors.findUnique({
+        where: {
+          id: user.sub,
+        },
+      });
+
+      if (vendor.status !== 'approved') {
+        throw new UnauthorizedException(
+          'Your vendor account must be approved to delete a store',
+        );
+      }
+
       const store = await this.prisma.stores.delete({
         where: {
           id: store_id,
@@ -226,6 +278,14 @@ export class StoresService {
       if (!store) {
         throw new InternalServerErrorException('Store could not be deleted');
       }
+
+      const sseData = {
+        action: 'Vendor deleting store',
+        vendor_id: user.sub,
+        vendor_username: user.username,
+      };
+
+      this.eventEmitter.emit('vendor.action', { data: sseData });
 
       return {
         message: 'Store deleted successfully',

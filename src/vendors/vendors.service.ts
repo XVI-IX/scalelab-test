@@ -1,17 +1,53 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UpdateVendorDto } from './dto';
-import { vendor } from './vendor.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 @Injectable()
 export class VendorsService {
   constructor(private prisma: PrismaService) {}
 
-  async updateVendor(vendorData: vendor, dto: UpdateVendorDto) {
+  async getVendor(vendor: UserEntity) {
+    try {
+      const data = await this.prisma.vendors.findUnique({
+        where: {
+          id: vendor.sub,
+        },
+        select: {
+          id: true,
+          name: true,
+          phone_number: true,
+          business_address: true,
+          status: true,
+          stores: true,
+          orders: true,
+        },
+      });
+
+      if (!data) {
+        throw new InternalServerErrorException(
+          'Vendor data could not be retrieved',
+        );
+      }
+
+      return {
+        message: 'Vendor data retrieved successfully',
+        status: 'success',
+        statusCode: 200,
+        data,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async updateVendor(data: UserEntity, dto: UpdateVendorDto) {
     try {
       const vendor = await this.prisma.vendors.update({
         where: {
-          id: vendorData.vendor_id,
+          id: data.sub,
+          status: 'approved',
         },
         data: dto,
       });

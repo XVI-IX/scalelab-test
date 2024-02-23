@@ -5,10 +5,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SendMessageDto } from './dto';
+import { EmailData } from 'src/email/email.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @UseInterceptors(CacheInterceptor)
   @CacheKey('admin.getVendors')
@@ -192,5 +198,39 @@ export class AdminService {
     }
   }
 
-  async sendMessage() {}
+  async sendMessage(dto: SendMessageDto) {
+    try {
+      const customers = await this.prisma.users.findMany({
+        where: {
+          role: 'customer',
+        },
+        select: {
+          email: true,
+        },
+      });
+
+      const emails = [];
+      customers.map((customer) => {
+        emails.push(customer.email);
+      });
+
+      const data: EmailData = {
+        data: {
+          emails,
+          subject: dto.subject,
+          content: dto.content,
+        },
+      };
+
+      this.eventEmitter.emit('admin.sendAllMessage', data);
+
+      return {
+        message: 'Emails sent to customers',
+        status: 'success',
+        statusCode: 200,
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

@@ -1,12 +1,36 @@
-import { ParseIntPipe } from '@nestjs/common';
-import { Controller, HttpCode, Get, Put, Param } from '@nestjs/common';
+import { ParseIntPipe, Sse } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  Post,
+  Body,
+  Get,
+  Put,
+  Param,
+  MessageEvent,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { Role } from 'src/common/enum/role.enum';
+import { Observable, fromEvent, map } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SendMessageDto } from './dto';
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private eventEmitter: EventEmitter2,
+  ) {}
+
+  @Sse('/sse')
+  sse(): Observable<MessageEvent> {
+    return fromEvent(this.eventEmitter, 'admin.allMessagesSent').pipe(
+      map(() => {
+        return { data: 'Mails sent to all customers' };
+      }),
+    );
+  }
 
   @Get('/vendors')
   @HttpCode(200)
@@ -61,5 +85,12 @@ export class AdminController {
   @Roles(Role.Admin)
   getCustomers() {
     return this.adminService.getCustomers();
+  }
+
+  @Post('/sendMessage')
+  @HttpCode(200)
+  @Roles(Role.Admin)
+  sendMessage(@Body() dto: SendMessageDto) {
+    return this.adminService.sendMessage(dto);
   }
 }

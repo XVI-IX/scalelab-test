@@ -28,4 +28,22 @@ export class EmailService {
     });
     return { jobId: job.id };
   }
+
+  @OnEvent('order.confirmed')
+  async orderConfirmEmail(data: EmailData) {
+    const job = await this.mailingQueue.add('order.confirmed', { data });
+    return { jobId: job.id };
+  }
+
+  @OnEvent('order.delivered')
+  async orderDelivered(data: EmailData) {
+    const job = await this.mailingQueue.add('order.delivered', { data });
+    return { jobId: job.id };
+  }
+
+  @OnEvent('admin.sendAllMessage')
+  async sendAdminMailAll(data: EmailData) {
+    const job = await this.mailingQueue.add('admin.messageAll', { data });
+    return { jobId: job.id };
+  }
 }

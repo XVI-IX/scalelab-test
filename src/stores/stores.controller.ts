@@ -126,7 +126,10 @@ export class StoresController {
 
   @Delete('/:storeId')
   @Roles(Role.Vendor)
-  async deleteStore(@Param('storeId', ParseIntPipe) storeId: number) {
-    return this.storesService.deleteStore(storeId);
+  async deleteStore(
+    @User() user: UserEntity,
+    @Param('storeId', ParseIntPipe) storeId: number,
+  ) {
+    return this.storesService.deleteStore(user, storeId);
   }
 }
