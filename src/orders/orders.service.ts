@@ -18,9 +18,9 @@ export class OrdersService {
     try {
       const order = await this.prisma.orders.create({
         data: {
-          customer: { connect: { user_id: customerId } },
-          store: { connect: { store_id: storeId } },
-          timeslot: { connect: { timeslot_id: Number(dto.timeslotId) } },
+          customer: { connect: { id: customerId } },
+          store: { connect: { id: storeId } },
+          timeslot: { connect: { id: Number(dto.timeslotId) } },
           total_price: dto.total_price,
           order_items: {
             createMany: {
@@ -33,7 +33,7 @@ export class OrdersService {
 
       const customer = await this.prisma.users.findUnique({
         where: {
-          user_id: customerId,
+          id: customerId,
         },
       });
 
@@ -50,7 +50,7 @@ export class OrdersService {
         data: {
           reference: response.reference,
           status: 'pending',
-          order_id: order.order_id,
+          order_id: order.id,
         },
       });
 
@@ -78,7 +78,7 @@ export class OrdersService {
 
         const order = await this.prisma.orders.update({
           where: {
-            order_id: order_id,
+            id: order_id,
           },
           data: {
             status: 'canceled',
@@ -114,7 +114,7 @@ export class OrdersService {
 
         const order = await this.prisma.orders.update({
           where: {
-            order_id: order_id,
+            id: order_id,
           },
           data: {
             status: 'confirmed',
@@ -153,6 +153,7 @@ export class OrdersService {
         const sseData = {
           data: order,
         };
+
         this.eventEmitter.emit('order.confirmed', data);
         this.eventEmitter.emit('valid.order', sseData);
 

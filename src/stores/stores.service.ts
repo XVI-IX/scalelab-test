@@ -22,7 +22,7 @@ export class StoresService {
         data: {
           vendor: {
             connect: {
-              vendor_id: user.sub,
+              id: user.sub,
             },
           },
           name: dto.name,
@@ -55,7 +55,7 @@ export class StoresService {
           vendor_id: user.sub,
         },
         select: {
-          store_id: true,
+          id: true,
           vendor_id: true,
           name: true,
           address: true,
@@ -90,7 +90,7 @@ export class StoresService {
     try {
       const store = await this.prisma.stores.findFirst({
         where: {
-          store_id: store_id,
+          id: store_id,
         },
       });
 
@@ -118,7 +118,7 @@ export class StoresService {
     try {
       const store = await this.prisma.stores.update({
         where: {
-          store_id: store_id,
+          id: store_id,
         },
         data: dto,
       });
@@ -152,14 +152,14 @@ export class StoresService {
       const store = await this.prisma.stores.findUnique({
         where: {
           vendor_id: user.sub,
-          store_id: store_id,
+          id: store_id,
         },
       });
 
       if (store) {
         await this.prisma.stores.update({
           where: {
-            store_id: store.store_id,
+            id: store.id,
           },
           data: {
             active: !store.active,
@@ -192,7 +192,7 @@ export class StoresService {
     try {
       const items = await this.prisma.stores.findUnique({
         where: {
-          store_id: store_id,
+          id: store_id,
         },
         select: {
           items: true,
@@ -219,7 +219,7 @@ export class StoresService {
     try {
       const store = await this.prisma.stores.delete({
         where: {
-          store_id: store_id,
+          id: store_id,
         },
       });
 

@@ -13,7 +13,7 @@ export class CustomersService {
           admin_open: true,
         },
         select: {
-          store_id: true,
+          id: true,
           name: true,
           address: true,
           image_url: true,
@@ -67,7 +67,7 @@ export class CustomersService {
     try {
       const order = await this.prisma.orders.findUnique({
         where: {
-          order_id: orderId,
+          id: orderId,
         },
       });
 

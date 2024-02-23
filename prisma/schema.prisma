@@ -33,14 +33,14 @@ enum payment_status {
   successful
 }
 
-enum status {
+enum genericStatus {
   pending
   approved
   rejected
 }
 
 model users {
-  user_id           Int       @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   user_name         String
   email             String    @unique
   phone_number      String?
@@ -56,44 +56,44 @@ model users {
 }
 
 model vendors {
-  vendor_id         Int     @id @default(autoincrement())
+  id                Int           @id @default(autoincrement())
   name              String
-  email             String  @unique
+  email             String        @unique
   password          String
-  phone_number      String  @unique
+  phone_number      String        @unique
   business_address  String
-  verificationToken String? @unique
-  verified          Boolean @default(false)
+  verificationToken String?       @unique
+  verified          Boolean       @default(false)
   recipient_code    String?
-  status     status   @default(pending)
-  resetToken String?
-  role       String   @default("vendor")
-  stores     stores[]
-  orders     orders[]
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @updatedAt
+  status            genericStatus @default(pending)
+  resetToken        String?
+  role              String        @default("vendor")
+  stores            stores[]
+  orders            orders[]
+  created_at        DateTime      @default(now()) @db.Timestamp(6)
+  updated_at        DateTime      @updatedAt
 }
 
 model stores {
-  store_id    Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   vendor_id   Int
-  vendor      vendors? @relation(fields: [vendor_id], references: [vendor_id], onDelete: Cascade)
+  vendor      vendors?      @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
   name        String
   address     String
   description String
   image_url   String
-  active      Boolean? @default(false)
-  status      status   @default(pending)
-  admin_open  Boolean  @default(true)
+  active      Boolean?      @default(false)
+  status      genericStatus @default(pending)
+  admin_open  Boolean       @default(true)
   items       items[]
   orders      orders[]
-  created_at  DateTime @default(now()) @db.Timestamp(6)
-  updated_at  DateTime @updatedAt
+  created_at  DateTime      @default(now()) @db.Timestamp(6)
+  updated_at  DateTime      @updatedAt
 }
 
 model items {
-  item_id     Int      @id @default(autoincrement())
-  store       stores   @relation(fields: [store_id], references: [store_id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  store       stores   @relation(fields: [store_id], references: [id], onDelete: Cascade)
   store_id    Int
   name        String
   description String
@@ -105,41 +105,41 @@ model items {
 }
 
 model orders {
-  order_id          Int           @id @default(autoincrement())
-  customer          users         @relation(fields: [customer_id], references: [user_id])
+  id                Int           @id @default(autoincrement())
+  customer          users         @relation(fields: [customer_id], references: [id])
   customer_id       Int
-  store             stores        @relation(fields: [store_id], references: [store_id])
+  store             stores        @relation(fields: [store_id], references: [id])
   store_id          Int
-  timeslot          timeslots?    @relation(fields: [timeslot_id], references: [timeslot_id])
+  timeslot          timeslots?    @relation(fields: [timeslot_id], references: [id])
   timeslot_id       Int
   placed_at         DateTime      @default(now())
   delivery_location String
   status            order_status  @default(pending)
   total_price       Float
   order_items       order_items[]
-  vendors           vendors?      @relation(fields: [vendor_id], references: [vendor_id])
+  vendors           vendors?      @relation(fields: [vendor_id], references: [id])
   vendor_id         Int?
 }
 
 model order_items {
-  order_item_id Int    @id @default(autoincrement())
-  order         orders @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
-  order_id      Int
-  item_id       Int
-  quantity      Int
-  price         Float
+  id       Int    @id @default(autoincrement())
+  order    orders @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id Int
+  item_id  Int
+  quantity Int
+  price    Float
 }
 
 model timeslots {
-  timeslot_id Int      @id @default(autoincrement())
-  start_time  DateTime @db.Timestamp(6)
-  end_time    DateTime @db.Timestamp(6)
-  orders      orders[]
+  id         Int      @id @default(autoincrement())
+  start_time DateTime @db.Timestamp(6)
+  end_time   DateTime @db.Timestamp(6)
+  orders     orders[]
 }
 
 model payments {
-  payment_id Int     @id @default(autoincrement())
-  reference  String  @unique
-  order_id   Int
-  status     String  @default("pending")
+  id        Int    @id @default(autoincrement())
+  reference String @unique
+  order_id  Int
+  status    String @default("pending")
 }

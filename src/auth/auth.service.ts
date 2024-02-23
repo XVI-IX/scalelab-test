@@ -53,7 +53,7 @@ export class AuthService {
       }
 
       const payload: UserEntity = {
-        sub: newUser.user_id,
+        sub: newUser.id,
         username: newUser.user_name,
         email: newUser.email,
         role: [newUser.role.toLowerCase()],
@@ -281,7 +281,7 @@ export class AuthService {
       }
 
       const payload: UserEntity = {
-        sub: user.user_id,
+        sub: user.id,
         username: user.user_name,
         email: user.email,
         role: [user.role.toLowerCase()],
@@ -313,8 +313,8 @@ export class AuthService {
       }
 
       if (!vendor.verified) {
-        const verificationToken = await this.jwt.sign(
-          { sub: vendor.vendor_id },
+        const verificationToken = await this.jwt.signAsync(
+          { sub: vendor.id },
           {
             secret: config.JWT_SECRET,
             expiresIn: '1h',
@@ -340,7 +340,7 @@ export class AuthService {
       }
 
       const payload: UserEntity = {
-        sub: vendor.vendor_id,
+        sub: vendor.id,
         email: vendor.email,
         username: vendor.name,
         role: ['vendor'],
@@ -399,7 +399,7 @@ export class AuthService {
       }
 
       const payload = {
-        sub: vendor.vendor_id,
+        sub: vendor.id,
         username: vendor.name,
         email: vendor.email,
       };
@@ -454,7 +454,7 @@ export class AuthService {
 
       const vendor = await this.prisma.vendors.update({
         where: {
-          vendor_id: decode.sub,
+          id: decode.sub,
           email: decode.email,
         },
         data: {

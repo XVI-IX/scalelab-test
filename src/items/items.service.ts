@@ -21,7 +21,7 @@ export class ItemsService {
         data: {
           store: {
             connect: {
-              store_id: store_id,
+              id: store_id,
             },
           },
           name: dto.name,
@@ -67,7 +67,7 @@ export class ItemsService {
       const item = await this.prisma.items.update({
         where: {
           store_id: store_id,
-          item_id: item_id,
+          id: item_id,
         },
         data: dto,
       });
@@ -105,7 +105,7 @@ export class ItemsService {
     try {
       const item = await this.prisma.items.findUnique({
         where: {
-          item_id: item_id,
+          id: item_id,
           store_id: store_id,
         },
       });
@@ -116,7 +116,7 @@ export class ItemsService {
 
       await this.prisma.items.update({
         where: {
-          item_id: item_id,
+          id: item_id,
         },
         data: {
           available: !item.available,
@@ -147,7 +147,7 @@ export class ItemsService {
     try {
       const item = await this.prisma.items.delete({
         where: {
-          item_id: item_id,
+          id: item_id,
           store_id: store_id,
         },
       });

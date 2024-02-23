@@ -38,7 +38,7 @@ export class AdminService {
     try {
       const vendor = await this.prisma.vendors.update({
         where: {
-          vendor_id: vendorId,
+          id: vendorId,
         },
         data: {
           status: 'approved',
@@ -64,7 +64,7 @@ export class AdminService {
     try {
       const vendor = await this.prisma.vendors.update({
         where: {
-          vendor_id: vendorId,
+          id: vendorId,
         },
         data: {
           status: 'pending',
@@ -90,7 +90,7 @@ export class AdminService {
     try {
       const store = await this.prisma.stores.update({
         where: {
-          store_id: storeId,
+          id: storeId,
           vendor_id: vendorId,
         },
         data: {
@@ -117,7 +117,7 @@ export class AdminService {
     try {
       const store = await this.prisma.stores.update({
         where: {
-          store_id: storeId,
+          id: storeId,
           vendor_id: vendorId,
         },
         data: {

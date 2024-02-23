@@ -11,7 +11,7 @@ export class VendorsService {
     try {
       const vendor = await this.prisma.vendors.update({
         where: {
-          vendor_id: vendorData.vendor_id,
+          id: vendorData.vendor_id,
         },
         data: dto,
       });
