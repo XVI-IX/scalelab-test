@@ -1,0 +1,49 @@
+services:
+  postgres_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=870522
+      - POSTGRES_DB=scalelab
+      - POSTGRES_USER=postgres
+    container_name: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    expose:
+      - 5432
+  
+  redis:
+    image: redis
+    container_name: redis
+    volumes:
+      - ./redis-data:/data
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scalelab-test
+    environment:
+      - DATABASE_URL=postgresql://postgres:870522@postgres_db:5432/scalelab
+      - JWT_SECRET=SECRET
+      - RESET_SECRET=SECRET
+      - ADMIN_MAIL=EMAILS
+      - URL=http://localhost:3000
+      - EMAIL_PASS=SECRET
+      - EMAIL_HOST=smtp.googlemail.com
+      - EMAIL_PORT=587
+      - EMAIL_USER=EMAIL_USER
+      - PAYSTACK_KEY=API_KEY
+      - TRANSACTION_FEE=200
+      - URL=https://api.paystack.co
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres_db
+      - redis
+    volumes:
+      - ./src:/app/src
